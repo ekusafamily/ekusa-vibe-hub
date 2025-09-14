@@ -110,7 +110,7 @@ const Layout = () => {
                 </span>
               </div>
               <p className="text-sm text-muted-foreground mb-4">
-                Embu University Students Association - Growing into greatness as a team.
+                Embu Kimathi University Students Association - Growing into greatness as a team.
               </p>
             </div>
 
@@ -165,7 +165,7 @@ const Layout = () => {
           </div>
 
           <div className="border-t pt-8 mt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; 2024 EKUSA - Embu University Students Association. All rights reserved.</p>
+            <p>&copy; 2025 EKUSA - Embu Kimathi University Students Association. All rights reserved.</p>
           </div>
         </div>
       </footer>
