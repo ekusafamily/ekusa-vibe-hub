@@ -10,7 +10,7 @@ const About = () => {
       description: "Leading EKUSA with passion and dedication to student excellence.",
       email: "sarah.president@ekusa.com",
       phone: "+254 712 345 678",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b5e8?w=400&h=400&fit=crop&crop=face"
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaz69vj15KPA0Z9IPzG3_UBbjEomoKErLLAw&s"
     },
     {
       name: "James Kiprotich",
