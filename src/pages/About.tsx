@@ -51,6 +51,38 @@ const About = () => {
       email: "david.pr@ekusa.com",
       phone: "+254 767 890 123",
       image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face"
+    },
+    {
+      name: "Ann Wambui",
+      role: "Academic Affairs Coordinator",
+      description: "Advocating for student academic needs and coordinating study groups.",
+      email: "ann.academic@ekusa.com",
+      phone: "+254 778 901 234",
+      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face"
+    },
+    {
+      name: "Kevin Otieno",
+      role: "Sports & Recreation Officer",
+      description: "Promoting fitness and organizing sports activities for all students.",
+      email: "kevin.sports@ekusa.com",
+      phone: "+254 789 012 345",
+      image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop&crop=face"
+    },
+    {
+      name: "Mercy Akinyi",
+      role: "Welfare Officer",
+      description: "Supporting student wellbeing and providing guidance counseling.",
+      email: "mercy.welfare@ekusa.com",
+      phone: "+254 790 123 456",
+      image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400&h=400&fit=crop&crop=face"
+    },
+    {
+      name: "Brian Mwangi",
+      role: "IT & Digital Media Manager",
+      description: "Managing our digital presence and technical infrastructure.",
+      email: "brian.tech@ekusa.com", 
+      phone: "+254 701 234 567",
+      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=face"
     }
   ];
 
