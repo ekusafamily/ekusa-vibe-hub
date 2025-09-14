@@ -14,7 +14,96 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      events: {
+        Row: {
+          actual_attendees: number | null
+          created_at: string
+          description: string
+          event_date: string
+          event_time: string | null
+          expected_attendees: number | null
+          highlight: string | null
+          id: string
+          images: string[] | null
+          is_past: boolean
+          location: string
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          actual_attendees?: number | null
+          created_at?: string
+          description: string
+          event_date: string
+          event_time?: string | null
+          expected_attendees?: number | null
+          highlight?: string | null
+          id?: string
+          images?: string[] | null
+          is_past?: boolean
+          location: string
+          title: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          actual_attendees?: number | null
+          created_at?: string
+          description?: string
+          event_date?: string
+          event_time?: string | null
+          expected_attendees?: number | null
+          highlight?: string | null
+          id?: string
+          images?: string[] | null
+          is_past?: boolean
+          location?: string
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      news: {
+        Row: {
+          author: string
+          category: string
+          content: string
+          created_at: string
+          excerpt: string
+          featured: boolean
+          id: string
+          image: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author: string
+          category: string
+          content: string
+          created_at?: string
+          excerpt: string
+          featured?: boolean
+          id?: string
+          image?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          category?: string
+          content?: string
+          created_at?: string
+          excerpt?: string
+          featured?: boolean
+          id?: string
+          image?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
