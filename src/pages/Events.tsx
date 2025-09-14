@@ -4,104 +4,96 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Clock, MapPin, Users, Heart, Mountain, BookOpen, Camera } from "lucide-react";
-
 const Events = () => {
-  const upcomingEvents = [
-    {
-      id: 1,
-      title: "Weekly Meeting",
-      description: "Join us for our monthly meeting to discuss upcoming initiatives, share updates, and plan future activities.",
-      date: "2024-02-15",
-      time: "2:00 PM",
-      location: "Main Auditorium",
-      type: "Meeting",
-      attendees: 120,
-      icon: Users
-    },
-    {
-      id: 2,
-      title: "Mount Kenya Hiking Adventure",
-      description: "An exciting outdoor adventure to explore Mount Kenya's beautiful trails and bond with fellow students.",
-      date: "2024-02-22",
-      time: "6:00 AM",
-      location: "Mount Kenya National Park",
-      type: "Adventure",
-      attendees: 45,
-      icon: Mountain
-    },
-    {
-      id: 3,
-      title: "Academic Excellence Workshop",
-      description: "Interactive workshop on study techniques, time management, and academic success strategies.",
-      date: "2024-03-01",
-      time: "10:00 AM",
-      location: "Library Conference Room",
-      type: "Workshop",
-      attendees: 80,
-      icon: BookOpen
-    },
-    {
-      id: 4,
-      title: "Community Charity Visit",
-      description: "Visit to local children's home to donate supplies and spend time with the children.",
-      date: "2024-03-08",
-      time: "9:00 AM",
-      location: "Sunshine Children's Home",
-      type: "Charity",
-      attendees: 35,
-      icon: Heart
-    }
-  ];
-
-  const pastEvents = [
-    {
-      id: 1,
-      title: "Welcome Back Party 2024",
-      description: "Amazing celebration to welcome students back for the new semester with music, food, and networking.",
-      date: "2024-01-20",
-      location: "Student Center",
-      type: "Social",
-      attendees: 200,
-      images: ["https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=300&fit=crop"],
-      highlight: "Record attendance with students from all faculties joining the celebration!"
-    },
-    {
-      id: 2,
-      title: "Blood Donation Drive",
-      description: "Successful blood donation campaign in partnership with Kenya Red Cross.",
-      date: "2024-01-10",
-      location: "Medical Center",
-      type: "Charity",
-      attendees: 150,
-      images: ["https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop"],
-      highlight: "Collected 120 units of blood, helping save lives in our community!"
-    },
-    {
-      id: 3,
-      title: "Leadership Summit",
-      description: "Intensive leadership development workshop for student leaders.",
-      date: "2023-12-15",
-      location: "Conference Hall",
-      type: "Workshop",
-      attendees: 60,
-      images: ["https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=400&h=300&fit=crop"],
-      highlight: "Developed leadership skills and created actionable plans for student initiatives."
-    }
-  ];
-
+  const upcomingEvents = [{
+    id: 1,
+    title: "Weekly Meeting",
+    description: "Join us for our monthly meeting to discuss upcoming initiatives, share updates, and plan future activities.",
+    date: "2024-02-15",
+    time: "2:00 PM",
+    location: "Main Auditorium",
+    type: "Meeting",
+    attendees: 120,
+    icon: Users
+  }, {
+    id: 2,
+    title: "Mount Kenya Hiking Adventure",
+    description: "An exciting outdoor adventure to explore Mount Kenya's beautiful trails and bond with fellow students.",
+    date: "2024-02-22",
+    time: "6:00 AM",
+    location: "Mount Kenya National Park",
+    type: "Adventure",
+    attendees: 45,
+    icon: Mountain
+  }, {
+    id: 3,
+    title: "Academic Excellence Workshop",
+    description: "Interactive workshop on study techniques, time management, and academic success strategies.",
+    date: "2024-03-01",
+    time: "10:00 AM",
+    location: "Library Conference Room",
+    type: "Workshop",
+    attendees: 80,
+    icon: BookOpen
+  }, {
+    id: 4,
+    title: "Community Charity Visit",
+    description: "Visit to local children's home to donate supplies and spend time with the children.",
+    date: "2024-03-08",
+    time: "9:00 AM",
+    location: "Sunshine Children's Home",
+    type: "Charity",
+    attendees: 35,
+    icon: Heart
+  }];
+  const pastEvents = [{
+    id: 1,
+    title: "Welcome Back Party 2024",
+    description: "Amazing celebration to welcome students back for the new semester with music, food, and networking.",
+    date: "2024-01-20",
+    location: "Student Center",
+    type: "Social",
+    attendees: 200,
+    images: ["https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=300&fit=crop"],
+    highlight: "Record attendance with students from all faculties joining the celebration!"
+  }, {
+    id: 2,
+    title: "Blood Donation Drive",
+    description: "Successful blood donation campaign in partnership with Kenya Red Cross.",
+    date: "2024-01-10",
+    location: "Medical Center",
+    type: "Charity",
+    attendees: 150,
+    images: ["https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop"],
+    highlight: "Collected 120 units of blood, helping save lives in our community!"
+  }, {
+    id: 3,
+    title: "Leadership Summit",
+    description: "Intensive leadership development workshop for student leaders.",
+    date: "2023-12-15",
+    location: "Conference Hall",
+    type: "Workshop",
+    attendees: 60,
+    images: ["https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=400&h=300&fit=crop"],
+    highlight: "Developed leadership skills and created actionable plans for student initiatives."
+  }];
   const getEventTypeColor = (type: string) => {
     switch (type.toLowerCase()) {
-      case 'meeting': return 'bg-primary';
-      case 'adventure': return 'bg-secondary';
-      case 'workshop': return 'bg-accent text-accent-foreground';
-      case 'charity': return 'bg-destructive';
-      case 'social': return 'bg-primary';
-      default: return 'bg-muted';
+      case 'meeting':
+        return 'bg-primary';
+      case 'adventure':
+        return 'bg-secondary';
+      case 'workshop':
+        return 'bg-accent text-accent-foreground';
+      case 'charity':
+        return 'bg-destructive';
+      case 'social':
+        return 'bg-primary';
+      default:
+        return 'bg-muted';
     }
   };
-
-  return (
-    <div className="space-y-16">
+  return <div className="space-y-16">
       {/* Header */}
       <section className="bg-gradient-hero">
         <div className="container py-20 text-center text-white">
@@ -122,10 +114,7 @@ const Events = () => {
                 <Calendar className="h-4 w-4" />
                 <span>Upcoming</span>
               </TabsTrigger>
-              <TabsTrigger value="past" className="flex items-center space-x-2">
-                <Camera className="h-4 w-4" />
-                <span>Past Events</span>
-              </TabsTrigger>
+              
             </TabsList>
           </div>
 
@@ -140,8 +129,7 @@ const Events = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {upcomingEvents.map((event) => (
-                <Card key={event.id} className="shadow-card hover:shadow-hover transition-all duration-300 group">
+              {upcomingEvents.map(event => <Card key={event.id} className="shadow-card hover:shadow-hover transition-all duration-300 group">
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex items-center space-x-3">
@@ -165,12 +153,12 @@ const Events = () => {
                     <div className="space-y-2">
                       <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                         <Calendar className="h-4 w-4" />
-                        <span>{new Date(event.date).toLocaleDateString('en-US', { 
-                          weekday: 'long', 
-                          year: 'numeric', 
-                          month: 'long', 
-                          day: 'numeric' 
-                        })}</span>
+                        <span>{new Date(event.date).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}</span>
                       </div>
                       <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                         <Clock className="h-4 w-4" />
@@ -190,8 +178,7 @@ const Events = () => {
                       Register Interest
                     </Button>
                   </CardContent>
-                </Card>
-              ))}
+                </Card>)}
             </div>
           </TabsContent>
 
@@ -206,16 +193,11 @@ const Events = () => {
             </div>
 
             <div className="space-y-8">
-              {pastEvents.map((event) => (
-                <Card key={event.id} className="shadow-card hover:shadow-hover transition-all duration-300 overflow-hidden">
+              {pastEvents.map(event => <Card key={event.id} className="shadow-card hover:shadow-hover transition-all duration-300 overflow-hidden">
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-0">
                     <div className="lg:col-span-1">
                       <div className="aspect-video lg:aspect-square overflow-hidden">
-                        <img 
-                          src={event.images[0]} 
-                          alt={event.title}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                        />
+                        <img src={event.images[0]} alt={event.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
                       </div>
                     </div>
                     <div className="lg:col-span-2 p-6">
@@ -253,8 +235,7 @@ const Events = () => {
                       </div>
                     </div>
                   </div>
-                </Card>
-              ))}
+                </Card>)}
             </div>
           </TabsContent>
         </Tabs>
@@ -277,8 +258,6 @@ const Events = () => {
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default Events;
