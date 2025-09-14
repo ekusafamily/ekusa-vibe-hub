@@ -9,7 +9,7 @@ const Events = () => {
   const upcomingEvents = [
     {
       id: 1,
-      title: "Monthly General Meeting",
+      title: "Weekly Meeting",
       description: "Join us for our monthly meeting to discuss upcoming initiatives, share updates, and plan future activities.",
       date: "2024-02-15",
       time: "2:00 PM",
