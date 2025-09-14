@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { Menu, X, Users, Calendar, Newspaper, Phone, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ekusaLogo from "@/assets/ekusa-logo.png";
 
 const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -24,9 +25,11 @@ const Layout = () => {
         <div className="container flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-primary">
-              <span className="text-lg font-bold text-primary-foreground">E</span>
-            </div>
+            <img 
+              src={ekusaLogo} 
+              alt="EKUSA Logo" 
+              className="h-10 w-10 rounded-lg object-contain"
+            />
             <div className="hidden md:block">
               <span className="text-xl font-bold bg-gradient-hero bg-clip-text text-transparent">
                 EKUSA
@@ -97,9 +100,11 @@ const Layout = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary">
-                  <span className="text-sm font-bold text-primary-foreground">E</span>
-                </div>
+                <img 
+                  src={ekusaLogo} 
+                  alt="EKUSA Logo" 
+                  className="h-8 w-8 rounded-lg object-contain"
+                />
                 <span className="text-lg font-bold bg-gradient-hero bg-clip-text text-transparent">
                   EKUSA
                 </span>
