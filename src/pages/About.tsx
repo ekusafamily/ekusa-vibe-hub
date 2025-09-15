@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Mail, Phone, Users, Award, Heart, Lightbulb } from "lucide-react";
+import MembershipRegistration from "@/components/MembershipRegistration";
 
 const About = () => {
   const leadership = [
@@ -228,12 +229,15 @@ const About = () => {
         <div className="container py-16 text-center text-white">
           <div className="max-w-3xl mx-auto space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold">
-              Want to Make a Difference?
+              Ready to Join Our Community?
             </h2>
             <p className="text-xl text-white/90">
-              Join our leadership team or volunteer with us. We're always looking for 
-              passionate students who want to contribute to our community.
+              Become part of EKUSA and connect with fellow students who share your 
+              passion for excellence, service, and making a positive impact.
             </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <MembershipRegistration />
+            </div>
           </div>
         </div>
       </section>

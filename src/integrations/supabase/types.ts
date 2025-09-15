@@ -139,6 +139,45 @@ export type Database = {
         }
         Relationships: []
       }
+      membership_registrations: {
+        Row: {
+          course: string
+          created_at: string
+          email: string
+          id: string
+          name: string
+          phone_number: string
+          reason_for_joining: string | null
+          registration_number: string
+          updated_at: string
+          year_of_study: string | null
+        }
+        Insert: {
+          course: string
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          phone_number: string
+          reason_for_joining?: string | null
+          registration_number: string
+          updated_at?: string
+          year_of_study?: string | null
+        }
+        Update: {
+          course?: string
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          phone_number?: string
+          reason_for_joining?: string | null
+          registration_number?: string
+          updated_at?: string
+          year_of_study?: string | null
+        }
+        Relationships: []
+      }
       news: {
         Row: {
           author: string

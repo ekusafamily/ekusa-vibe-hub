@@ -1,0 +1,278 @@
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Trash2, Eye, Search, Download } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+
+interface MembershipRegistration {
+  id: string;
+  name: string;
+  email: string;
+  course: string;
+  registration_number: string;
+  phone_number: string;
+  year_of_study: string | null;
+  reason_for_joining: string | null;
+  created_at: string;
+}
+
+const MembershipManager = () => {
+  const [registrations, setRegistrations] = useState<MembershipRegistration[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedRegistration, setSelectedRegistration] = useState<MembershipRegistration | null>(null);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchRegistrations();
+  }, []);
+
+  const fetchRegistrations = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("membership_registrations")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setRegistrations(data || []);
+    } catch (error) {
+      console.error("Error fetching membership registrations:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch membership registrations",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this membership registration?")) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("membership_registrations")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Membership registration deleted successfully",
+      });
+
+      fetchRegistrations();
+    } catch (error) {
+      console.error("Error deleting membership registration:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete membership registration",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleView = (registration: MembershipRegistration) => {
+    setSelectedRegistration(registration);
+    setViewDialogOpen(true);
+  };
+
+  const exportToCSV = () => {
+    const headers = [
+      "Name",
+      "Email",
+      "Course",
+      "Registration Number",
+      "Phone Number",
+      "Year of Study",
+      "Reason for Joining",
+      "Date Applied"
+    ];
+
+    const csvData = registrations.map(reg => [
+      reg.name,
+      reg.email,
+      reg.course,
+      reg.registration_number,
+      reg.phone_number,
+      reg.year_of_study || "",
+      reg.reason_for_joining || "",
+      new Date(reg.created_at).toLocaleDateString()
+    ]);
+
+    const csvContent = [headers, ...csvData]
+      .map(row => row.map(field => `"${field}"`).join(","))
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "membership_registrations.csv";
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const filteredRegistrations = registrations.filter(registration =>
+    registration.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    registration.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    registration.course.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    registration.registration_number.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <Search className="h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search registrations..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full sm:w-80"
+          />
+        </div>
+        <Button onClick={exportToCSV} variant="outline">
+          <Download className="h-4 w-4 mr-2" />
+          Export CSV
+        </Button>
+      </div>
+
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Course</TableHead>
+              <TableHead>Reg. Number</TableHead>
+              <TableHead>Year</TableHead>
+              <TableHead>Date Applied</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredRegistrations.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                  No membership registrations found
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredRegistrations.map((registration) => (
+                <TableRow key={registration.id}>
+                  <TableCell className="font-medium">{registration.name}</TableCell>
+                  <TableCell>{registration.email}</TableCell>
+                  <TableCell>{registration.course}</TableCell>
+                  <TableCell>{registration.registration_number}</TableCell>
+                  <TableCell>
+                    {registration.year_of_study ? (
+                      <Badge variant="secondary">{registration.year_of_study}</Badge>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(registration.created_at).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleView(registration)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDelete(registration.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* View Registration Dialog */}
+      <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Membership Registration Details</DialogTitle>
+          </DialogHeader>
+          {selectedRegistration && (
+            <Card className="border-0 shadow-none">
+              <CardContent className="space-y-4 p-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <strong>Name:</strong>
+                    <p>{selectedRegistration.name}</p>
+                  </div>
+                  <div>
+                    <strong>Email:</strong>
+                    <p>{selectedRegistration.email}</p>
+                  </div>
+                  <div>
+                    <strong>Course:</strong>
+                    <p>{selectedRegistration.course}</p>
+                  </div>
+                  <div>
+                    <strong>Registration Number:</strong>
+                    <p>{selectedRegistration.registration_number}</p>
+                  </div>
+                  <div>
+                    <strong>Phone Number:</strong>
+                    <p>{selectedRegistration.phone_number}</p>
+                  </div>
+                  <div>
+                    <strong>Year of Study:</strong>
+                    <p>{selectedRegistration.year_of_study || "Not specified"}</p>
+                  </div>
+                  <div>
+                    <strong>Date Applied:</strong>
+                    <p>{new Date(selectedRegistration.created_at).toLocaleDateString()}</p>
+                  </div>
+                </div>
+                {selectedRegistration.reason_for_joining && (
+                  <div>
+                    <strong>Reason for Joining:</strong>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {selectedRegistration.reason_for_joining}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default MembershipManager;
