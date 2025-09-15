@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { Menu, X, Users, Calendar, Newspaper, Phone, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import MembershipRegistration from "@/components/MembershipRegistration";
 import ekusaLogo from "@/assets/ekusa-logo.png";
 
 const Layout = () => {
@@ -39,21 +40,24 @@ const Layout = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-1">
-            {navigation.map((item) => (
-              <Button
-                key={item.name}
-                variant={isActive(item.href) ? "default" : "ghost"}
-                asChild
-                className="transition-all duration-200"
-              >
-                <Link to={item.href} className="flex items-center space-x-2">
-                  <item.icon className="h-4 w-4" />
-                  <span>{item.name}</span>
-                </Link>
-              </Button>
-            ))}
-          </nav>
+          <div className="hidden md:flex items-center space-x-4">
+            <nav className="flex items-center space-x-1">
+              {navigation.map((item) => (
+                <Button
+                  key={item.name}
+                  variant={isActive(item.href) ? "default" : "ghost"}
+                  asChild
+                  className="transition-all duration-200"
+                >
+                  <Link to={item.href} className="flex items-center space-x-2">
+                    <item.icon className="h-4 w-4" />
+                    <span>{item.name}</span>
+                  </Link>
+                </Button>
+              ))}
+            </nav>
+            <MembershipRegistration />
+          </div>
 
           {/* Mobile Menu Button */}
           <Button
@@ -84,6 +88,9 @@ const Layout = () => {
                   </Link>
                 </Button>
               ))}
+              <div className="pt-2 border-t">
+                <MembershipRegistration />
+              </div>
             </nav>
           </div>
         )}

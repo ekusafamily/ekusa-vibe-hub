@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +29,7 @@ const EventRegistration = ({ eventId, eventTitle }: EventRegistrationProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<'check' | 'register' | 'new-registration'>('check');
+  const [memberData, setMemberData] = useState<any>(null);
   const [memberCheck, setMemberCheck] = useState<MemberCheck>({
     email: "",
     registration_number: "",
@@ -41,22 +42,61 @@ const EventRegistration = ({ eventId, eventTitle }: EventRegistrationProps) => {
   });
   const { toast } = useToast();
 
+  // Check for existing member data on component mount
+  useEffect(() => {
+    const storedMemberData = localStorage.getItem('ekusa_member');
+    if (storedMemberData) {
+      try {
+        const parsed = JSON.parse(storedMemberData);
+        setMemberData(parsed);
+        setStep('check');
+      } catch (error) {
+        console.error('Error parsing member data:', error);
+        localStorage.removeItem('ekusa_member');
+      }
+    }
+  }, []);
+
   const handleMemberCheck = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // Check if member exists by email or registration number
-      const { data: existingMember, error } = await supabase
-        .from("membership_registrations")
-        .select("id, name")
-        .or(`email.eq.${memberCheck.email},registration_number.eq.${memberCheck.registration_number}`)
-        .maybeSingle();
+      let existingMember;
+      
+      // If we have stored member data, use it directly
+      if (memberData) {
+        // Verify the stored member data is still valid
+        const { data: verifyMember, error: verifyError } = await supabase
+          .from("membership_registrations")
+          .select("id, name")
+          .eq("id", memberData.id)
+          .maybeSingle();
 
-      if (error) throw error;
+        if (verifyError) throw verifyError;
+        
+        if (verifyMember) {
+          existingMember = verifyMember;
+        } else {
+          // Stored data is invalid, remove it
+          localStorage.removeItem('ekusa_member');
+          setMemberData(null);
+          throw new Error('Stored member data is invalid');
+        }
+      } else {
+        // Check by email or registration number
+        const { data: foundMember, error } = await supabase
+          .from("membership_registrations")
+          .select("id, name")
+          .or(`email.eq.${memberCheck.email},registration_number.eq.${memberCheck.registration_number}`)
+          .maybeSingle();
+
+        if (error) throw error;
+        existingMember = foundMember;
+      }
 
       if (existingMember) {
-        // Member exists, check if already interested in this event
+        // Check if already interested in this event
         const { data: existingInterest, error: interestError } = await supabase
           .from("event_interests")
           .select("id")
@@ -188,48 +228,75 @@ const EventRegistration = ({ eventId, eventTitle }: EventRegistrationProps) => {
           <CardContent className="p-0">
             {step === 'check' && (
               <form onSubmit={handleMemberCheck} className="space-y-4">
-                <p className="text-sm text-muted-foreground mb-4">
-                  Are you already an EKUSA member? Enter your details to quickly mark your interest.
-                </p>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="check-email">Email Address</Label>
-                  <Input
-                    id="check-email"
-                    type="email"
-                    placeholder="your.email@example.com"
-                    value={memberCheck.email}
-                    onChange={(e) => handleMemberCheckChange("email", e.target.value)}
-                    required
-                  />
-                </div>
+                {memberData ? (
+                  <div className="text-center space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      Welcome back, <strong>{memberData.name}</strong>!
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Click below to mark your interest in this event.
+                    </p>
+                    <Button 
+                      type="submit" 
+                      className="w-full" 
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Recording Interest...
+                        </>
+                      ) : (
+                        "Show Interest in Event"
+                      )}
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Are you already an EKUSA member? Enter your details to quickly mark your interest.
+                    </p>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="check-email">Email Address</Label>
+                      <Input
+                        id="check-email"
+                        type="email"
+                        placeholder="your.email@example.com"
+                        value={memberCheck.email}
+                        onChange={(e) => handleMemberCheckChange("email", e.target.value)}
+                        required
+                      />
+                    </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="check-reg-number">Registration Number</Label>
-                  <Input
-                    id="check-reg-number"
-                    type="text"
-                    placeholder="Your student registration number"
-                    value={memberCheck.registration_number}
-                    onChange={(e) => handleMemberCheckChange("registration_number", e.target.value)}
-                    required
-                  />
-                </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="check-reg-number">Registration Number</Label>
+                      <Input
+                        id="check-reg-number"
+                        type="text"
+                        placeholder="Your student registration number"
+                        value={memberCheck.registration_number}
+                        onChange={(e) => handleMemberCheckChange("registration_number", e.target.value)}
+                        required
+                      />
+                    </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full" 
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Checking...
-                    </>
-                  ) : (
-                    "Check Membership"
-                  )}
-                </Button>
+                    <Button 
+                      type="submit" 
+                      className="w-full" 
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Checking...
+                        </>
+                      ) : (
+                        "Check Membership"
+                      )}
+                    </Button>
+                  </>
+                )}
               </form>
             )}
 
