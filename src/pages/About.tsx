@@ -77,12 +77,12 @@ const About = () => {
       image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400&h=400&fit=crop&crop=face"
     },
     {
-      name: "Brian Mwangi",
+      name: "Brian Ireri",
       role: "IT & Digital Media Manager",
       description: "Managing our digital presence and technical infrastructure.",
       email: "brian.tech@ekusa.com", 
       phone: "+254 701 234 567",
-      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=face"
+      image: "https://i.ibb.co/8DXgGSNx/IMG-20250218-163059-556-transcpr.jpg"
     }
   ];
 
