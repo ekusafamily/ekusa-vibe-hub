@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Clock, MapPin, Users, Heart, Mountain, BookOpen, Camera } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import EventRegistration from "@/components/EventRegistration";
 
 interface Event {
   id: string;
@@ -178,9 +179,10 @@ const Events = () => {
                         </div>
                       </div>
 
-                      <Button className="w-full" size="sm">
-                        Register Interest
-                      </Button>
+                      <EventRegistration
+                        eventId={event.id}
+                        eventTitle={event.title}
+                      />
                     </CardContent>
                   </Card>
                 );
