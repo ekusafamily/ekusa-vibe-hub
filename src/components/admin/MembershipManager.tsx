@@ -19,26 +19,41 @@ interface MembershipRegistration {
   reason_for_joining: string | null;
   created_at: string;
 }
+
+interface EventInterest {
+  id: string;
+  member_id: string;
+  event_id: string;
+  created_at: string;
+  events: {
+    title: string;
+    event_date: string;
+  };
+  membership_registrations: {
+    name: string;
+    email: string;
+  };
+}
 const MembershipManager = () => {
   const [registrations, setRegistrations] = useState<MembershipRegistration[]>([]);
+  const [eventInterests, setEventInterests] = useState<EventInterest[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRegistration, setSelectedRegistration] = useState<MembershipRegistration | null>(null);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
-  const {
-    toast
-  } = useToast();
+  const [activeTab, setActiveTab] = useState<'members' | 'interests'>('members');
+  const { toast } = useToast();
   useEffect(() => {
     fetchRegistrations();
+    fetchEventInterests();
   }, []);
   const fetchRegistrations = async () => {
     try {
-      const {
-        data,
-        error
-      } = await supabase.from("membership_registrations").select("*").order("created_at", {
-        ascending: false
-      });
+      const { data, error } = await supabase
+        .from("membership_registrations")
+        .select("*")
+        .order("created_at", { ascending: false });
+      
       if (error) throw error;
       setRegistrations(data || []);
     } catch (error) {
@@ -50,6 +65,29 @@ const MembershipManager = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchEventInterests = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("event_interests")
+        .select(`
+          *,
+          events (title, event_date),
+          membership_registrations (name, email)
+        `)
+        .order("created_at", { ascending: false });
+      
+      if (error) throw error;
+      setEventInterests(data || []);
+    } catch (error) {
+      console.error("Error fetching event interests:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch event interests",
+        variant: "destructive"
+      });
     }
   };
   const handleDelete = async (id: string) => {
@@ -93,65 +131,157 @@ const MembershipManager = () => {
     a.click();
     window.URL.revokeObjectURL(url);
   };
-  const filteredRegistrations = registrations.filter(registration => registration.name.toLowerCase().includes(searchTerm.toLowerCase()) || registration.email.toLowerCase().includes(searchTerm.toLowerCase()) || registration.course.toLowerCase().includes(searchTerm.toLowerCase()) || registration.registration_number.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredRegistrations = registrations.filter(registration => 
+    registration.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    registration.email.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    registration.course.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    registration.registration_number.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredEventInterests = eventInterests.filter(interest =>
+    interest.membership_registrations.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    interest.membership_registrations.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    interest.events.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   if (loading) {
     return <div className="flex items-center justify-center py-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>;
   }
   return <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Search className="h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search registrations..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full sm:w-80" />
+      {/* Header with tabs and controls */}
+      <div className="flex flex-col gap-4">
+        <div className="flex gap-2 border-b">
+          <Button 
+            variant={activeTab === 'members' ? 'default' : 'ghost'}
+            onClick={() => setActiveTab('members')}
+            className="rounded-b-none"
+          >
+            Members ({registrations.length})
+          </Button>
+          <Button 
+            variant={activeTab === 'interests' ? 'default' : 'ghost'}
+            onClick={() => setActiveTab('interests')}
+            className="rounded-b-none"
+          >
+            Event Interests ({eventInterests.length})
+          </Button>
         </div>
-        <Button onClick={exportToCSV} variant="outline">
-          <Download className="h-4 w-4 mr-2" />
-          Export CSV
-        </Button>
+        
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Search className="h-4 w-4 text-muted-foreground" />
+            <Input 
+              placeholder={`Search ${activeTab === 'members' ? 'members' : 'interests'}...`} 
+              value={searchTerm} 
+              onChange={e => setSearchTerm(e.target.value)} 
+              className="w-full sm:w-80" 
+            />
+          </div>
+          {activeTab === 'members' && (
+            <Button onClick={exportToCSV} variant="outline">
+              <Download className="h-4 w-4 mr-2" />
+              Export CSV
+            </Button>
+          )}
+        </div>
       </div>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Course</TableHead>
-              <TableHead>Reg. Number</TableHead>
-              <TableHead>Year</TableHead>
-              <TableHead>Date Applied</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredRegistrations.length === 0 ? <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                  No membership registrations found
-                </TableCell>
-              </TableRow> : filteredRegistrations.map(registration => <TableRow key={registration.id}>
-                  <TableCell className="font-medium">{registration.name}</TableCell>
-                  <TableCell>{registration.email}</TableCell>
-                  <TableCell>{registration.course}</TableCell>
-                  <TableCell>{registration.registration_number}</TableCell>
-                  <TableCell>
-                    {registration.year_of_study ? <Badge variant="secondary">{registration.year_of_study}</Badge> : <span className="text-muted-foreground">-</span>}
+      {/* Members Table */}
+      {activeTab === 'members' && (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Course</TableHead>
+                <TableHead>Reg. Number</TableHead>
+                <TableHead>Year</TableHead>
+                <TableHead>Date Applied</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredRegistrations.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    No membership registrations found
                   </TableCell>
-                  <TableCell>
-                    {new Date(registration.created_at).toLocaleDateString()}
+                </TableRow>
+              ) : (
+                filteredRegistrations.map(registration => (
+                  <TableRow key={registration.id}>
+                    <TableCell className="font-medium">{registration.name}</TableCell>
+                    <TableCell>{registration.email}</TableCell>
+                    <TableCell>{registration.course}</TableCell>
+                    <TableCell>{registration.registration_number}</TableCell>
+                    <TableCell>
+                      {registration.year_of_study ? (
+                        <Badge variant="secondary">{registration.year_of_study}</Badge>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(registration.created_at).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <Button variant="outline" size="sm" onClick={() => handleView(registration)}>
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+
+      {/* Event Interests Table */}
+      {activeTab === 'interests' && (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Member Name</TableHead>
+                <TableHead>Member Email</TableHead>
+                <TableHead>Event</TableHead>
+                <TableHead>Event Date</TableHead>
+                <TableHead>Interest Shown</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredEventInterests.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                    No event interests found
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <Button variant="outline" size="sm" onClick={() => handleView(registration)}>
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      
-                    </div>
-                  </TableCell>
-                </TableRow>)}
-          </TableBody>
-        </Table>
-      </div>
+                </TableRow>
+              ) : (
+                filteredEventInterests.map(interest => (
+                  <TableRow key={interest.id}>
+                    <TableCell className="font-medium">
+                      {interest.membership_registrations.name}
+                    </TableCell>
+                    <TableCell>{interest.membership_registrations.email}</TableCell>
+                    <TableCell>{interest.events.title}</TableCell>
+                    <TableCell>
+                      {new Date(interest.events.event_date).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(interest.created_at).toLocaleDateString()}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
 
       {/* View Registration Dialog */}
       <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
