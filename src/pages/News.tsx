@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Calendar, User, ArrowRight, Megaphone, Trophy, Users, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -136,10 +137,47 @@ const News = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <CardDescription className="text-base">{item.excerpt}</CardDescription>
-                    <Button variant="outline" className="group/btn">
-                      Read More
-                      <ArrowRight className="h-4 w-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="group/btn">
+                          Read More
+                          <ArrowRight className="h-4 w-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                        <DialogHeader>
+                          <div className="flex items-center space-x-2 mb-3">
+                            <CategoryIcon className="h-4 w-4" />
+                            <Badge className={getCategoryColor(item.category)}>
+                              {item.category}
+                            </Badge>
+                          </div>
+                          <DialogTitle className="text-2xl">{item.title}</DialogTitle>
+                          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                            <div className="flex items-center space-x-1">
+                              <Calendar className="h-4 w-4" />
+                              <span>{new Date(item.created_at).toLocaleDateString()}</span>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <User className="h-4 w-4" />
+                              <span>{item.author}</span>
+                            </div>
+                          </div>
+                        </DialogHeader>
+                        {item.image && (
+                          <div className="aspect-video overflow-hidden rounded-lg mb-6">
+                            <img 
+                              src={item.image} 
+                              alt={item.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                        <div className="prose prose-sm max-w-none">
+                          <p className="whitespace-pre-wrap">{item.content}</p>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </CardContent>
                 </Card>
               );
@@ -189,10 +227,47 @@ const News = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <CardDescription className="text-sm line-clamp-3">{item.excerpt}</CardDescription>
-                  <Button variant="outline" size="sm" className="w-full group/btn">
-                    Read More
-                    <ArrowRight className="h-3 w-3 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm" className="w-full group/btn">
+                        Read More
+                        <ArrowRight className="h-3 w-3 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                      <DialogHeader>
+                        <div className="flex items-center space-x-2 mb-3">
+                          <CategoryIcon className="h-4 w-4" />
+                          <Badge className={getCategoryColor(item.category)}>
+                            {item.category}
+                          </Badge>
+                        </div>
+                        <DialogTitle className="text-2xl">{item.title}</DialogTitle>
+                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                          <div className="flex items-center space-x-1">
+                            <Calendar className="h-4 w-4" />
+                            <span>{new Date(item.created_at).toLocaleDateString()}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <User className="h-4 w-4" />
+                            <span>{item.author}</span>
+                          </div>
+                        </div>
+                      </DialogHeader>
+                      {item.image && (
+                        <div className="aspect-video overflow-hidden rounded-lg mb-6">
+                          <img 
+                            src={item.image} 
+                            alt={item.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                      <div className="prose prose-sm max-w-none">
+                        <p className="whitespace-pre-wrap">{item.content}</p>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </CardContent>
               </Card>
             );
