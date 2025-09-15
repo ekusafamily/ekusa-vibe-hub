@@ -164,15 +164,6 @@ const News = () => {
                             </div>
                           </div>
                         </DialogHeader>
-                        {item.image && (
-                          <div className="aspect-video overflow-hidden rounded-lg mb-6">
-                            <img 
-                              src={item.image} 
-                              alt={item.title}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        )}
                         <div className="prose prose-sm max-w-none">
                           <p className="whitespace-pre-wrap">{item.content}</p>
                         </div>
@@ -254,15 +245,6 @@ const News = () => {
                           </div>
                         </div>
                       </DialogHeader>
-                      {item.image && (
-                        <div className="aspect-video overflow-hidden rounded-lg mb-6">
-                          <img 
-                            src={item.image} 
-                            alt={item.title}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      )}
                       <div className="prose prose-sm max-w-none">
                         <p className="whitespace-pre-wrap">{item.content}</p>
                       </div>
