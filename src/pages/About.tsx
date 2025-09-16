@@ -62,12 +62,12 @@ const About = () => {
       image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face"
     },
     {
-      name: "Kevin Otieno",
-      role: "Sports & Recreation Officer",
-      description: "Promoting fitness and organizing sports activities for all students.",
-      email: "kevin.sports@ekusa.com",
-      phone: "+254 789 012 345",
-      image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop&crop=face"
+      name: "Joseph Munene Kagendo",
+      role: "Chief Whip",
+      description: "Ensuring everything is in order.",
+      email: "munenes-whip@ekusa.com",
+      phone: "+254 768765783",
+      image: "https://i.ibb.co/zH4W8vm5/20240814075207-IMG-4440-1.jpg"
     },
     {
       name: "Mercy Akinyi",
